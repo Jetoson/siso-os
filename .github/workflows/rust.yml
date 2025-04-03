@@ -1,4 +1,4 @@
-name: Rust
+name: Build & Test SISO OS
 
 on:
   push:
@@ -11,12 +11,21 @@ env:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Build
-      run: cargo build --verbose
-    - name: Run tests
-      run: cargo test --verbose
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: sudo apt update && sudo apt install -y qemu-system-x86
+
+    - name: Set up Rust target
+      run: rustup target add x86_64-unknown-none
+
+    - name: Build OS
+      run: cargo build --target x86_64-unknown-none --verbose
+
+    - name: Run OS in QEMU
+      run: |
+        qemu-system-x86_64 -drive format=raw,file=target/x86_64-unknown-none/debug/siso-os -nographic -no-reboot -monitor none -serial stdio
