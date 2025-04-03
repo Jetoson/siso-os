@@ -1,0 +1,17 @@
+[package]
+name = "siso-os"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+bootloader = "0.11" # Bootloader crate
+x86_64 = "0.14"     # x86_64-specific abstractions
+volatile = "0.4"    # Volatile memory access
+spin = "0.9"        # Synchronization primitives
+
+[profile.dev]
+panic = "abort"
+
+[profile.release]
+panic = "abort"
+lto = true
